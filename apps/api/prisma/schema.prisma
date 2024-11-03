@@ -19,3 +19,138 @@ model Sample {
 
   @@map("samples") // if you want to use snake_case format
 }
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  user_id       String    @id @default(uuid())
+  email         String    @unique
+  first_name    String    @db.VarChar(255)
+  last_name     String?   @db.VarChar(255)
+  password      String
+  role          Role
+  date_of_birth DateTime?
+  avatar        String?
+  verified      Boolean   @default(false)
+  phone         String?   @unique @db.VarChar(20)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @default(now())
+  refferal_code String?   @unique
+
+  referralsSent     Referral[]    @relation("ReferrerRelation")
+  referralsReceived Referral[]    @relation("ReferredRelation")
+  Cart              Cart[]
+  Order             Order[]
+  ReviewEvent       ReviewEvent[]
+}
+
+model Referral {
+  referral_id   Int      @id @default(autoincrement())
+  referrer_id   String   @unique
+  referred_id   String?
+  referral_code String?  @unique
+  points        Int      @default(0)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  referrer User  @relation("ReferrerRelation", fields: [referrer_id], references: [user_id])
+  referred User? @relation("ReferredRelation", fields: [referred_id], references: [user_id])
+}
+
+model EventCategory {
+  category_id Int      @id @default(autoincrement())
+  name        String   @unique
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  Event       Event[]
+}
+
+model Event {
+  event_id                 String   @id @default(uuid())
+  title                    String   @db.VarChar(255)
+  date                     DateTime
+  price                    Float    @default(0)
+  location                 String   @db.VarChar(255)
+  user_id                  String
+  created_at               DateTime @default(now())
+  updated_at               DateTime @updatedAt
+  eventCategoryCategory_id Int
+
+  category    EventCategory @relation(fields: [eventCategoryCategory_id], references: [category_id])
+  Discount    Discount[]
+  Cart        Cart[]
+  Order       Order[]
+  ReviewEvent ReviewEvent[]
+}
+
+model ReviewEvent {
+  review_id    Int      @id @default(autoincrement())
+  user_id      String
+  event_id     String
+  event_rating Int
+  event_review String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  User  User  @relation(fields: [user_id], references: [user_id])
+  Event Event @relation(fields: [event_id], references: [event_id])
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model Discount {
+  discount_id             Int          @id @default(autoincrement())
+  discount_code           String       @unique
+  discount_value          Float
+  discount_quota          Int
+  discount_event_event_id String
+  type                    DiscountType
+  start_date              DateTime
+  end_date                DateTime
+  created_at              DateTime     @default(now())
+  updated_at              DateTime     @updatedAt
+  discount_event          Event        @relation(fields: [discount_event_event_id], references: [event_id])
+}
+
+model Cart {
+  cart_id    Int      @id @default(autoincrement())
+  user_id    String
+  event_id   String
+  quantity   Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  order_id   Int?
+
+  User  User   @relation(fields: [user_id], references: [user_id])
+  Event Event  @relation(fields: [event_id], references: [event_id])
+  Order Order? @relation(fields: [order_id], references: [order_id])
+}
+
+enum status_order {
+  PENDING
+  PAID
+  CANCEL
+}
+
+model Order {
+  order_id     Int          @id @default(autoincrement())
+  user_id      String
+  event_id     String
+  quantity     Int
+  total        Float
+  status_order status_order @default(PENDING)
+  paymentlink  String
+  proofpayment String
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+
+  User  User   @relation(fields: [user_id], references: [user_id])
+  Event Event  @relation(fields: [event_id], references: [event_id])
+  Cart  Cart[]
+}
