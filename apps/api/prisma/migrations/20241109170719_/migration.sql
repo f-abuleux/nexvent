@@ -24,27 +24,14 @@ CREATE TABLE `User` (
     `phone` VARCHAR(20) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `refferal_code` VARCHAR(191) NULL,
+    `referral_code` VARCHAR(191) NULL,
+    `referred_code` VARCHAR(191) NULL,
+    `point` INTEGER NULL,
 
     UNIQUE INDEX `User_email_key`(`email`),
     UNIQUE INDEX `User_phone_key`(`phone`),
-    UNIQUE INDEX `User_refferal_code_key`(`refferal_code`),
+    UNIQUE INDEX `User_referral_code_key`(`referral_code`),
     PRIMARY KEY (`user_id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Referral` (
-    `referral_id` INTEGER NOT NULL AUTO_INCREMENT,
-    `referrer_id` VARCHAR(191) NOT NULL,
-    `referred_id` VARCHAR(191) NULL,
-    `referral_code` VARCHAR(191) NULL,
-    `points` INTEGER NOT NULL DEFAULT 0,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL,
-
-    UNIQUE INDEX `Referral_referrer_id_key`(`referrer_id`),
-    UNIQUE INDEX `Referral_referral_code_key`(`referral_code`),
-    PRIMARY KEY (`referral_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -62,13 +49,16 @@ CREATE TABLE `EventCategory` (
 CREATE TABLE `Event` (
     `event_id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(255) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `image` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL,
+    `quantity` INTEGER NOT NULL,
     `price` DOUBLE NOT NULL DEFAULT 0,
     `location` VARCHAR(255) NOT NULL,
     `user_id` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
-    `eventCategoryCategory_id` INTEGER NOT NULL,
+    `eventCategoryCategory_name` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`event_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -111,6 +101,7 @@ CREATE TABLE `Cart` (
     `quantity` INTEGER NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
+    `order_id` INTEGER NULL,
 
     PRIMARY KEY (`cart_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -131,23 +122,8 @@ CREATE TABLE `Order` (
     PRIMARY KEY (`order_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- CreateTable
-CREATE TABLE `_CartToOrder` (
-    `A` INTEGER NOT NULL,
-    `B` INTEGER NOT NULL,
-
-    UNIQUE INDEX `_CartToOrder_AB_unique`(`A`, `B`),
-    INDEX `_CartToOrder_B_index`(`B`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
 -- AddForeignKey
-ALTER TABLE `Referral` ADD CONSTRAINT `Referral_referrer_id_fkey` FOREIGN KEY (`referrer_id`) REFERENCES `User`(`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Referral` ADD CONSTRAINT `Referral_referred_id_fkey` FOREIGN KEY (`referred_id`) REFERENCES `User`(`user_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Event` ADD CONSTRAINT `Event_eventCategoryCategory_id_fkey` FOREIGN KEY (`eventCategoryCategory_id`) REFERENCES `EventCategory`(`category_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Event` ADD CONSTRAINT `Event_eventCategoryCategory_name_fkey` FOREIGN KEY (`eventCategoryCategory_name`) REFERENCES `EventCategory`(`name`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `ReviewEvent` ADD CONSTRAINT `ReviewEvent_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -165,13 +141,10 @@ ALTER TABLE `Cart` ADD CONSTRAINT `Cart_user_id_fkey` FOREIGN KEY (`user_id`) RE
 ALTER TABLE `Cart` ADD CONSTRAINT `Cart_event_id_fkey` FOREIGN KEY (`event_id`) REFERENCES `Event`(`event_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Cart` ADD CONSTRAINT `Cart_order_id_fkey` FOREIGN KEY (`order_id`) REFERENCES `Order`(`order_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `Order` ADD CONSTRAINT `Order_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Order` ADD CONSTRAINT `Order_event_id_fkey` FOREIGN KEY (`event_id`) REFERENCES `Event`(`event_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_CartToOrder` ADD CONSTRAINT `_CartToOrder_A_fkey` FOREIGN KEY (`A`) REFERENCES `Cart`(`cart_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_CartToOrder` ADD CONSTRAINT `_CartToOrder_B_fkey` FOREIGN KEY (`B`) REFERENCES `Order`(`order_id`) ON DELETE CASCADE ON UPDATE CASCADE;

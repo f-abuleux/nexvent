@@ -2,24 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  overflow: scroll
+}
+
+* {
+  /* overflow: hidden; */
+  scroll-behavior: smooth;
+}
+
 @font-face {
   font-family: 'HelveticaNeueCyr';
   src: url('/fonts/HelveticaNeueCyr-Light.otf') format('opentype');
   font-weight: 100;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'HelveticaNeueCyr';
   src: url('/fonts/HelveticaNeueCyr-Roman.otf') format('opentype');
   font-weight: 200;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'HelveticaNeueCyr';
   src: url('/fonts/HelveticaNeueCyr-Medium.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'HelveticaNeueCyr';
   src: url('/fonts/HelveticaNeueCyr-Bold.otf') format('opentype');

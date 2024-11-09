@@ -1,15 +1,40 @@
 'use client'
 
+import { formatDate } from "@/components/converter"
+import { registerUser } from "@/components/libs/action/login"
+import { createCookie } from "@/components/libs/action/server"
 import { registerSchema } from "@/components/schema"
-import { ErrorMessage, Field, Form, Formik } from "formik"
+import { IRegister } from "@/components/types/types"
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { toast } from "react-toastify"
 
 export default function RegisterAdmin() {
+    const router = useRouter()
 
-    const initialValues = {
+    const register = async (data: IRegister, action: FormikHelpers<IRegister>) => {
+        try {
+            const { result, ok } = await registerUser(data);
+            if (!ok) throw result.msg;
+            createCookie('token', result.token);
+            toast.success(result.msg);
+            router.push('/');
+            action.resetForm();
+            router.refresh();
+        } catch (error) {
+            router.refresh()
+            action.resetForm();
+            toast.error(error as string);
+        }
+    }
+
+    const initialValues: IRegister = {
         email: '',
         password: '',
         first_name: '',
+        last_name: '',
+        role : "ADMIN",
         phone: '',
         date_of_birth: ''
     }
@@ -23,6 +48,12 @@ export default function RegisterAdmin() {
                     validationSchema={registerSchema}
                     onSubmit={(values, actions) => {
                         console.log(values)
+                        const formattedValues = {
+                            ...values,
+                            date_of_birth: formatDate(values.date_of_birth)
+                        };
+                        console.log(formattedValues)
+                        register(formattedValues, actions)
                     }} >
                     {({ isSubmitting }) => (
                         <Form className="flex flex-col p-4 gap-2 w-[350px] items-center">

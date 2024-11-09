@@ -38,27 +38,29 @@ model User {
   phone         String?   @unique @db.VarChar(20)
   created_at    DateTime  @default(now())
   updated_at    DateTime  @default(now())
-  refferal_code String?   @unique
+  referral_code String?   @unique
+  referred_code String?
+  point Int?
 
-  referralsSent     Referral[]    @relation("ReferrerRelation")
-  referralsReceived Referral[]    @relation("ReferredRelation")
+  // referralsSent     Referral[]    @relation("ReferrerRelation")
+  // referralsReceived Referral[]    @relation("ReferredRelation")
   Cart              Cart[]
   Order             Order[]
   ReviewEvent       ReviewEvent[]
 }
 
-model Referral {
-  referral_id   Int      @id @default(autoincrement())
-  referrer_id   String   @unique
-  referred_id   String?
-  referral_code String?  @unique
-  points        Int      @default(0)
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+// model Referral {
+//   referral_id   Int      @id @default(autoincrement())
+//   referrer_id   String   @unique
+//   referred_id   String?
+//   referral_code String?  @unique
+//   points        Int      @default(0)
+//   created_at    DateTime @default(now())
+//   updated_at    DateTime @updatedAt
 
-  referrer User  @relation("ReferrerRelation", fields: [referrer_id], references: [user_id])
-  referred User? @relation("ReferredRelation", fields: [referred_id], references: [user_id])
-}
+//   referrer User  @relation("ReferrerRelation", fields: [referrer_id], references: [user_id])
+//   referred User? @relation("ReferredRelation", fields: [referred_id], references: [user_id])
+// }
 
 model EventCategory {
   category_id Int      @id @default(autoincrement())
@@ -71,15 +73,18 @@ model EventCategory {
 model Event {
   event_id                 String   @id @default(uuid())
   title                    String   @db.VarChar(255)
+  description              String
+  image                    String
   date                     DateTime
+  quantity                 Int
   price                    Float    @default(0)
   location                 String   @db.VarChar(255)
   user_id                  String
   created_at               DateTime @default(now())
   updated_at               DateTime @updatedAt
-  eventCategoryCategory_id Int
+  eventCategoryCategory_name String
 
-  category    EventCategory @relation(fields: [eventCategoryCategory_id], references: [category_id])
+  category    EventCategory @relation(fields: [eventCategoryCategory_name], references: [name])
   Discount    Discount[]
   Cart        Cart[]
   Order       Order[]

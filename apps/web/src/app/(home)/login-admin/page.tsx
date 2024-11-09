@@ -1,11 +1,34 @@
 'use client'
 
+import { loginUser } from '@/components/libs/action/login';
+import { createCookie } from '@/components/libs/action/server';
 import { loginSchema } from '@/components/schema';
+import { ILogin } from '@/components/types/types';
 import { Form, Formik, FormikHelpers, Field, ErrorMessage } from 'formik';
 import Image from 'next/image';
-import { MdAccountCircle } from "react-icons/md";
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export default function LoginAdmin() {
+    const router = useRouter()
+
+    const login = async (data: ILogin, action: FormikHelpers<ILogin>) => {
+        try {
+            const { result, ok } = await loginUser(data);
+            if (!ok) throw result.msg;
+            createCookie('token', result.token);
+            toast.success(result.msg);
+            action.resetForm();
+            router.refresh();
+            setTimeout(() => {
+                router.push('/admin-dashboard');
+            }, 200)
+        } catch (error) {
+            router.refresh()
+            action.resetForm();
+            toast.error(error as string);
+        }
+    }
 
     const initialValues = {
         email: '',
@@ -21,6 +44,8 @@ export default function LoginAdmin() {
                     validationSchema={loginSchema}
                     onSubmit={(values, actions) => {
                         console.log(values)
+                        login(values, actions)
+
                     }}
                 >
                     {({ isSubmitting }) => (

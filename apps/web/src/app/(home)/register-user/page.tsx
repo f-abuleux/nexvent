@@ -1,16 +1,41 @@
 'use client'
 
 import { registerSchema } from "@/components/schema"
-import { ErrorMessage, Field, Form, Formik } from "formik"
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik"
 import Image from "next/image"
+import { format } from "date-fns"
+import { formatDate } from "@/components/converter"
+import { useRouter } from "next/navigation"
+import { IRegister } from "@/components/types/types"
+import { registerUser } from "@/components/libs/action/login"
+import { createCookie } from "@/components/libs/action/server"
+import { toast } from "react-toastify"
 
 export default function RegisterUser() {
+    const router = useRouter()
 
-    const initialValues = {
+    const register = async (data: IRegister, action: FormikHelpers<IRegister>) => {
+        try {
+            const { result, ok } = await registerUser(data);
+            if (!ok) throw result.msg;
+            createCookie('token', result.token);
+            toast.success(result.msg);
+            router.push('/');
+            action.resetForm();
+            router.refresh();
+        } catch (error) {
+            router.refresh()
+            action.resetForm();
+            toast.error(error as string);
+        }
+    }
+
+    const initialValues: IRegister = {
         email: '',
         password: '',
         first_name: '',
         last_name: '',
+        role : "USER",
         phone: '',
         date_of_birth: ''
     }
@@ -23,7 +48,12 @@ export default function RegisterUser() {
                     initialValues={initialValues}
                     validationSchema={registerSchema}
                     onSubmit={(values, actions) => {
-                        console.log(values)
+                        const formattedValues = {
+                            ...values,
+                            date_of_birth: formatDate(values.date_of_birth)
+                        };
+                        console.log(formattedValues)
+                        register(formattedValues, actions)
                     }} >
                     {({ isSubmitting }) => (
                         <Form className="flex flex-col p-4 gap-2 w-[350px] items-center">
@@ -31,7 +61,7 @@ export default function RegisterUser() {
                             <p className='font-light text-[12px] w-[300px]'>Find your next events on <span className='font-medium'>NexVent</span>, already have an account? <a href="/login-user" className="font-medium underline">Login Here!</a></p>
                             <div className="flex flex-col w-full">
                                 <label htmlFor="email" className="text-darkestblue  text-[16px]">Email</label>
-                                <Field type="email" name="email" className="px-5 py-2 border border-main rounded-full focus:outline-none text-[16px]" placeholder="nexvent@gmail.com"/>
+                                <Field type="email" name="email" className="px-5 py-2 border border-main rounded-full focus:outline-none text-[16px]" placeholder="nexvent@gmail.com" />
                                 <ErrorMessage name="email" component="div" className="text-darkpurplered text-[12px]" />
                             </div>
                             <div className="w-full border-[1px] p-2 rounded-[30px]">
@@ -57,13 +87,13 @@ export default function RegisterUser() {
                             </div>
                             <div className="flex flex-col w-full">
                                 <label htmlFor="phone" className="text-darkestblue text-[16px]">Phone</label>
-                                <Field type="text" name="phone" className="px-5 py-2 border border-main rounded-full focus:outline-none text-[16px]" placeholder="08XXXXXXXXXX"/>
+                                <Field type="text" name="phone" className="px-5 py-2 border border-main rounded-full focus:outline-none text-[16px]" placeholder="08XXXXXXXXXX" />
                                 <ErrorMessage name="phone" component="div" className="text-darkpurplered text-[12px]" />
                             </div>
                             <div className="flex flex-col  w-full">
                                 <label htmlFor="date_of_birth" className="text-darkestblue text-[16px]">Date of Birth</label>
                                 <Field type="date" name="date_of_birth" className="px-5 py-2 border border-main rounded-full focus:outline-none text-[16px]" />
-                                <ErrorMessage name="date_of_birth" component='div' className="text-darkpurplered text-[12px] fix " />
+                                <ErrorMessage name="date_of_birth" component='div' className="text-darkpurplered text-[12px]" />
                             </div>
                             <button type="submit" className="px-4 py-1 w-[125px] bg-main  font-medium rounded-full mt-4 text-lightestcream text-[20px] bg-darkestblue active:scale-95 duration-200 hover:bg-darkcream" disabled={isSubmitting}>Register</button>
                         </Form>
