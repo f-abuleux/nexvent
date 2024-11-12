@@ -1,5 +1,6 @@
 "use client"
 
+import { formatDate } from "@/components/converter";
 import { createDiscountEventSchema } from "@/components/schema";
 import { ICreateDiscount, IEventStatus } from "@/components/types/types";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
@@ -11,7 +12,7 @@ export default function FormCreateDiscount() {
         discount_code: '',
         discount_value: 0,
         discount_quota: 0,
-        type: "FIX",
+        type: "FIXED",
         start_date: '',
         end_date: '',
         discount_event_event_id: ""
@@ -39,7 +40,23 @@ export default function FormCreateDiscount() {
 
 
     const createDiscountEvent = async (data: ICreateDiscount, actions: FormikHelpers<ICreateDiscount>) => {
+        try {
+            const createDiscount = await fetch("http://localhost:8000/api/discount/create", {
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                method: "POST"
+            })
 
+            if (!createDiscount.ok) throw new Error("Failed to create discount");
+            const result = await createDiscount.json();
+            console.log("Server Response:", result);
+
+        } catch (error) {
+            console.log(error)
+        }
     };
 
     return (
@@ -49,6 +66,12 @@ export default function FormCreateDiscount() {
                 validationSchema={createDiscountEventSchema}
                 onSubmit={(values, action) => {
                     console.log(values);
+                    const formattedValues: ICreateDiscount = {
+                        ...values,
+                        start_date: formatDate(values.start_date),
+                        end_date: formatDate(values.end_date)
+                    };
+                    createDiscountEvent(formattedValues, action)
                     action.resetForm()
                 }}
             >
@@ -69,13 +92,13 @@ export default function FormCreateDiscount() {
                         <p>Discount Value Type</p>
                         <div>
                             <div className="text-darkestblue mt-2 text-[12px]">
-                                {values.type === "FIX"
+                                {values.type === "FIXED"
                                     ? "Fix type instantly decreases ticket price!"
                                     : "Percentage type decreases the price by a percentage from ticket price!"
                                 }
                             </div>
                             <Field as="select" name="type" className="p-2 border-[1px] w-full rounded-[12px]">
-                                <option value="FIX">Fix</option>
+                                <option value="FIXED">Fixed</option>
                                 <option value="PERCENTAGE">Percentage</option>
                             </Field>
                         </div>

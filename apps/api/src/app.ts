@@ -13,6 +13,8 @@ import { AuthRouter } from './routers/auth.router';
 import { EventRouter } from './routers/event.router';
 import path from 'path'
 import { CategoryRouter } from './routers/category.router';
+import { DiscountRouter } from './routers/discount.router';
+import { CartRouter } from './routers/cart.router';
 
 export default class App {
   private app: Express;
@@ -58,6 +60,8 @@ export default class App {
     const authRouter = new AuthRouter()
     const eventRouter = new EventRouter()
     const categoryRouter = new CategoryRouter()
+    const discountRouter = new DiscountRouter()
+    const cartRouter = new CartRouter()
 
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, Purwadhika Student API!`);
@@ -67,6 +71,8 @@ export default class App {
     this.app.use('/api/auth', authRouter.getRouter())
     this.app.use('/api/event', eventRouter.getRouter())
     this.app.use('/api/category', categoryRouter.getRouter())
+    this.app.use('/api/discount', discountRouter.getRouter())
+    this.app.use('/api/cart', cartRouter.getRouter( ))
   }
 
   public start(): void {

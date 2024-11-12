@@ -6,37 +6,42 @@ import { useEffect, useState } from "react";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
 import { IoMdShare } from "react-icons/io";
 
-export default function QuantityAndNotes() {
-    const [quantity, setQuantitiy] = useState(0)
-    const [price, setPrice] = useState(100000)
-    const totalPrice = quantity * price
+
+
+export default function QuantityAndNotes({ eventquantity, eventprice } : {eventquantity : number, eventprice : number}) {
+    const [quantity, setQuantity] = useState(eventquantity)
+    const totalPrice = quantity * eventprice
 
 
     const increaseQuantity = () => {
-        setQuantitiy(quantity + 1)
+        setQuantity(prevQuantity => prevQuantity + 1)
     }
     const decreaseQuantity = () => {
-        setQuantitiy(quantity - 1)
-        if (quantity == 0) setQuantitiy(0)
+        if(quantity > eventquantity){
+            setQuantity(eventquantity);
+            return;
+        }
+        setQuantity(prevQuantity => Math.max(prevQuantity - 1, 0))
     }
 
     useEffect(() => {
-        increaseQuantity
-        decreaseQuantity
-    }, [quantity, totalPrice])
+        increaseQuantity()
+        decreaseQuantity()
+    }, [totalPrice, quantity])
+
     return (
         <div className="bg-white w-72 h-[700px] bg-white/40 shadow-md rounded-[12px] p-4 gap-5 flex flex-col items-center">
             <p className="bg-white p-2 rounded-[6px] w-full text-center font-medium shadow-md">SET QUANTITY AND NOTES</p>
             <div className="flex flex-col justify-start w-full gap-4">
                 <p className="text-left">QUANTITY</p>
-                <input type="number" name="" id="" className="p-2 rounded-[6px] text-center " value={quantity} min="0" onChange={(e) => setQuantitiy(Number(e.target.value))} />
+                <input type="number" name="" id="" className="p-2 rounded-[6px] text-center " value={quantity} min="0" onChange={(e) => setQuantity(Number(e.target.value))} />
                 <div className="w-full flex justify-around items-center gap-2">
                     <button onClick={increaseQuantity} className="bg-white w-1/2 p-2 rounded-[6px] flex gap-2 items-center font-medium"><IoMdAdd /> <p>Increase</p></button>
                     <button onClick={decreaseQuantity} className="bg-white w-1/2 p-2 rounded-[6px] flex gap-2 items-center font-medium"><IoMdRemove /><p>Decrease</p></button>
                 </div>
-                <p className="text-[12px]">Quantity can only added up to 0 below availablity</p>
+                <p className="text-[12px]">Quantity can only added up to <span className="font-black">{eventquantity}</span> below availablity</p>
                 <p className="text-left font-bold text-[16px']">TICKET PRICE</p>
-                <p className="text-left">{convertPrice(price)}</p>
+                <p className="text-left">{convertPrice(eventprice)}</p>
                 <input type="text" name="" id="" className="p-2 rounded-[6px] text-center " />
                 <button className="bg-white w-full p-2 rounded-[6px]  items-center font-medium text-center"> <p>Apply Code</p></button>
                 <p className="text-left font-bold text-[16px']">TOTAL PRICE</p>

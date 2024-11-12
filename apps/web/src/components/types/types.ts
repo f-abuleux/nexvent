@@ -33,7 +33,7 @@ export interface ICreateDiscount {
     type: string;
     start_date: string;
     end_date: string;
-    discount_event_event_id : string
+    discount_event_event_id: string
 }
 
 export interface ICreateEvent {
@@ -56,7 +56,7 @@ export interface IEventStatus {
     }
     eventTotal: [
         {
-            event_id : string,
+            event_id: string,
             title: string,
             date: string,
             price: number,
@@ -65,4 +65,38 @@ export interface IEventStatus {
         }
     ],
     totalPage: number
+}
+
+export interface IDiscountStatus {
+    discountOnGoing: []
+    discountPass: []
+    discountTotal: [{
+        discount_code: string
+        discount_value: number,
+        discount_quota: number,
+        discount_event_event_id: string,
+        discount_event: {
+            price: number,
+            title: string,
+            location: string
+        }
+        type: string,
+        start_date: string,
+        end_date: string,
+    }],
+    totalPage: number
+}
+
+export interface IDetailEvent {
+    detailEvent: {
+        event_id: string,
+        title: string,
+        description: string,
+        image: string,
+        date: string,
+        quantity: number,
+        price: number,
+        location: string,
+        eventCategoryCategory_name: string,
+    },
 }

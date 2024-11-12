@@ -34,7 +34,6 @@ export default function EventStatus() {
             <div>
                 <div className="flex justify-between gap-4">
                     <p className="w-1/2 rounded-[12px] shadow-md bg-white justify-between flex gap-2 p-4">ACTIVE <span className="font-extrabold">{dataEvent?.eventOnGoing.length}</span></p>
-                    {/* <p className="w-1/3 rounded-[12px] shadow-md bg-white justify-s flex flex-col gap-2 p-4">PENDING</p> */}
                     <p className="w-1/2 rounded-[12px] shadow-md bg-white justify-between flex gap-2 p-4">PASS <span className="font-extrabold">{dataEvent?.eventPass.length}</span></p>
                 </div>
             </div>

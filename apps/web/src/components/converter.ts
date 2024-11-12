@@ -18,6 +18,14 @@ export const convertDateDatabase = (date : string) =>{
     return date.split("T")[0];
 }
 
-const convertIdr = (price: number) => {
+export const convertIdr = (price: number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
+}
+
+export const checkDiscount = (price : number ) => {
+    if (price <= 100) {
+        return `${price}%`
+    } else {
+        return `Rp. ${price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`
+    }
 }

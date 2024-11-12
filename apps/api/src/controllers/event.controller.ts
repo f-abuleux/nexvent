@@ -12,7 +12,7 @@ export class EventController {
 
             if (!user) throw "User not found to access creating event api"
 
-            const image = `${baseUrl}/public/category_url/${req.file?.filename}`
+            const image = `${baseUrl}/public/event/${req.file?.filename}`
 
             const creatingEvent = await prisma.event.create({
                 data: {
@@ -21,7 +21,7 @@ export class EventController {
                     image: image,
                     date: req.body.date,
                     quantity: +req.body.quantity,
-                    location: req.body.quantity,
+                    location: req.body.location,
                     user_id: user.user_id,
                     price: +req.body.price,
                     eventCategoryCategory_name: req.body.category,
@@ -107,6 +107,27 @@ export class EventController {
                 status: "Failed",
                 res: 400,
                 msg: "Failed to getEventByAdmin API"
+            })
+        }
+    }
+
+    async getEventDetail(req: Request, res : Response){
+        try {
+            const detailEvent = await prisma.event.findUnique({
+                where: {event_id : req.params.event_id}
+            })
+
+            return res.status(200).send({
+                status : "Success",
+                res : 200,
+                msg: "Success to access getEventDetails API",
+                detailEvent
+            })
+        } catch (error) {
+            return res.status(400).send({
+                status: "Failed",
+                res : 200,
+                msg : "Failed to access getEventDetails API"
             })
         }
     }
