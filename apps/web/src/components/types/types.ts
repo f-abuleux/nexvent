@@ -100,3 +100,24 @@ export interface IDetailEvent {
         eventCategoryCategory_name: string,
     },
 }
+
+export interface ICartData {
+    events: {
+        event_id: string,
+        title: string,
+        date: string,
+        price: number,
+        quantity: number,
+        location: string,
+        eventCategoryCategory_id: number
+    }[]
+    getCart: {
+        discountDiscount_name: string,
+        event_id: string,
+        order_id: string,
+        price: number,
+        quantity: number,
+        totalPrice: number,
+        user_id: string
+    }[]
+}

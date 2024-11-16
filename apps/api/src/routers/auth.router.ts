@@ -16,7 +16,7 @@ export class AuthRouter{
     }
 
     private initialization()  {
-        this.router.get('/user', this.authMiddleware.verifyToken, this.authController.getUser)
+        this.router.get("/user", this.authMiddleware.verifyToken, this.authController.getUser)
         this.router.post("/createuser", this.authController.createUser)
         this.router.post("/loginuser", this.authController.loginUser)
         this.router.patch(`/verifyinguser/:token`, this.authController.verificationUser)

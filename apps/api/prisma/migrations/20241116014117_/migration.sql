@@ -99,27 +99,17 @@ CREATE TABLE `Cart` (
     `user_id` VARCHAR(191) NOT NULL,
     `event_id` VARCHAR(191) NOT NULL,
     `quantity` INTEGER NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL,
-    `order_id` INTEGER NULL,
-
-    PRIMARY KEY (`cart_id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Order` (
-    `order_id` INTEGER NOT NULL AUTO_INCREMENT,
-    `user_id` VARCHAR(191) NOT NULL,
-    `event_id` VARCHAR(191) NOT NULL,
-    `quantity` INTEGER NOT NULL,
-    `total` DOUBLE NOT NULL,
-    `status_order` ENUM('PENDING', 'PAID', 'CANCEL') NOT NULL DEFAULT 'PENDING',
+    `price` INTEGER NOT NULL,
+    `totalPrice` DOUBLE NOT NULL,
+    `status_order` ENUM('INCART', 'PENDING', 'PAID', 'CANCEL') NOT NULL DEFAULT 'INCART',
     `paymentlink` VARCHAR(191) NOT NULL,
     `proofpayment` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
+    `order_id` INTEGER NULL,
+    `discountDiscount_name` VARCHAR(191) NULL,
 
-    PRIMARY KEY (`order_id`)
+    PRIMARY KEY (`cart_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -135,16 +125,10 @@ ALTER TABLE `ReviewEvent` ADD CONSTRAINT `ReviewEvent_event_id_fkey` FOREIGN KEY
 ALTER TABLE `Discount` ADD CONSTRAINT `Discount_discount_event_event_id_fkey` FOREIGN KEY (`discount_event_event_id`) REFERENCES `Event`(`event_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `Cart` ADD CONSTRAINT `Cart_discountDiscount_name_fkey` FOREIGN KEY (`discountDiscount_name`) REFERENCES `Discount`(`discount_code`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `Cart` ADD CONSTRAINT `Cart_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Cart` ADD CONSTRAINT `Cart_event_id_fkey` FOREIGN KEY (`event_id`) REFERENCES `Event`(`event_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Cart` ADD CONSTRAINT `Cart_order_id_fkey` FOREIGN KEY (`order_id`) REFERENCES `Order`(`order_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Order` ADD CONSTRAINT `Order_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `User`(`user_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Order` ADD CONSTRAINT `Order_event_id_fkey` FOREIGN KEY (`event_id`) REFERENCES `Event`(`event_id`) ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -45,7 +45,7 @@ model User {
   // referralsSent     Referral[]    @relation("ReferrerRelation")
   // referralsReceived Referral[]    @relation("ReferredRelation")
   Cart        Cart[]
-  Order       Order[]
+  // Order       Order[]
   ReviewEvent ReviewEvent[]
 }
 
@@ -87,7 +87,6 @@ model Event {
   category    EventCategory @relation(fields: [eventCategoryCategory_name], references: [name])
   Discount    Discount[]
   Cart        Cart[]
-  Order       Order[]
   ReviewEvent ReviewEvent[]
 }
 
@@ -125,42 +124,43 @@ model Discount {
 }
 
 model Cart {
-  cart_id    Int      @id @default(autoincrement())
-  user_id    String
-  event_id   String
-  quantity   Int
-  totalPrice Int
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  order_id   Int?
+  cart_id               Int          @id @default(autoincrement())
+  user_id               String
+  event_id              String
+  quantity              Int
+  price                 Int
+  totalPrice            Float
+  status_order          status_order @default(INCART)
+  paymentlink           String
+  proofpayment          String
+  created_at            DateTime     @default(now())
+  updated_at            DateTime     @updatedAt
+  order_id              Int?
   discountDiscount_name String?
 
-  Discount            Discount? @relation(fields: [discountDiscount_name], references: [discount_code])
-  User                User      @relation(fields: [user_id], references: [user_id])
-  Event               Event    @relation(fields: [event_id], references: [event_id])
-  Order               Order?   @relation(fields: [order_id], references: [order_id])
+  Discount Discount? @relation(fields: [discountDiscount_name], references: [discount_code])
+  User     User      @relation(fields: [user_id], references: [user_id])
+  Event    Event     @relation(fields: [event_id], references: [event_id])
+  // Order    Order?    @relation(fields: [order_id], references: [order_id])
 }
 
 enum status_order {
+  INCART
   PENDING
   PAID
   CANCEL
 }
 
-model Order {
-  order_id     Int          @id @default(autoincrement())
-  user_id      String
-  event_id     String
-  quantity     Int
-  total        Float
-  status_order status_order @default(PENDING)
-  paymentlink  String
-  proofpayment String
-  created_at   DateTime     @default(now())
-  updated_at   DateTime     @updatedAt
-  
+// model Order {
+//   order_id     Int          @id @default(autoincrement())
+//   user_id      String
+//   total        Float
+//   status_order status_order @default(PENDING)
+//   paymentlink  String
+//   proofpayment String
+//   created_at   DateTime     @default(now())
+//   updated_at   DateTime     @updatedAt
 
-  User  User   @relation(fields: [user_id], references: [user_id])
-  Event Event  @relation(fields: [event_id], references: [event_id])
-  Cart  Cart[]
-}
+//   User User   @relation(fields: [user_id], references: [user_id])
+//   Cart Cart[]
+// }

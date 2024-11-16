@@ -10,6 +10,7 @@ import Cookies from "js-cookie";
 
 export const Header = () => {
   const [route, setRoute] = useState<string>()
+  const [role, setRole] = useState<string>()
 
   const fetchData = async () => {
     try {
@@ -19,17 +20,20 @@ export const Header = () => {
         console.log(payload.role)
         if (payload.role == "ADMIN") {
           setRoute("admin-dashboard")
+          setRole("ADMIN")
         } else if (payload.role == "USER") {
           setRoute("user")
+          setRole("USER")
         }
       } else {
-        setRoute ("login-user")
+        setRoute("login-user")
       }
     } catch (error) {
       console.log(error)
     }
   }
 
+  console.log(role)
 
   useEffect(() => {
     fetchData()
@@ -52,8 +56,10 @@ export const Header = () => {
       </div>
       <div className="w-[150px] flex gap-8 items-center">
         {
-          route !== "USER" && (
-            <FaCartArrowDown size={28} />
+          role == "USER" && (
+            <a href="/user/cart">
+              <FaCartArrowDown size={28} />
+            </a>
           )
         }
         <a href={`/${route}`}><CgProfile size={32} /></a>
