@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { CgProfile } from "react-icons/cg";
 import { FaCartArrowDown } from "react-icons/fa6";
-import { getCookie } from "./libs/action/server";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 
@@ -17,14 +16,16 @@ export const Header = () => {
       let cookie = await Cookies.get("token");
       if (cookie) {
         let payload = JSON.parse(atob(cookie.split('.')[1]));
-        console.log(payload.role)
-        if (payload.role == "ADMIN") {
-          setRoute("admin-dashboard")
-          setRole("ADMIN")
-        } else if (payload.role == "USER") {
-          setRoute("user")
-          setRole("USER")
-        }
+        setTimeout(() => {
+          console.log(payload.role)
+          if (payload.role == "ADMIN") {
+            setRoute("admin-dashboard")
+            setRole("ADMIN")
+          } else if (payload.role == "USER") {
+            setRoute("user")
+            setRole("USER")
+          }
+        }, 500)
       } else {
         setRoute("login-user")
       }

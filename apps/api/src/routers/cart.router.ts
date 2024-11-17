@@ -16,9 +16,11 @@ export class CartRouter{
 
     private initializeRouter() {
         this.router.get("/byid", this.authMiddleware.verifyToken, this.cartController.getCartbyId)
-        this.router.post(`/create/:event_id`, this.authMiddleware.verifyToken, this.authMiddleware.checkUser, this.cartController.addCart)
-        this.router.post('/create', this.authMiddleware.verifyToken, this.cartController.createTransactionCart)
+        this.router.get("/byid/transaction", this.authMiddleware.verifyToken, this.cartController.getTransactionbyId)
+        this.router.post(`/create`, this.authMiddleware.verifyToken, this.authMiddleware.checkUser, this.cartController.addCart)
+        this.router.post(`/create/transaction/:cart_id`, this.authMiddleware.verifyToken, this.cartController.createTransactionCart)
         this.router.post('/update/status', this.cartController.updateStatusOrderCart)
+        this.router.delete(`/delete/transaction/:cart_id`, this.authMiddleware.verifyToken, this.cartController.deleteCart)
     }
 
     getRouter(): Router {

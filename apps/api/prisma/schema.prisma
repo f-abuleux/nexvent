@@ -124,7 +124,7 @@ model Discount {
 }
 
 model Cart {
-  cart_id               Int          @id @default(autoincrement())
+  cart_id               String          @id @default(uuid())
   user_id               String
   event_id              String
   quantity              Int

@@ -1,14 +1,25 @@
+"use client"
+
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { GoHomeFill } from "react-icons/go";
-import { MdEvent } from "react-icons/md";
-import { BiSolidDiscount } from "react-icons/bi";
 import { FaClipboardList } from "react-icons/fa";
 import { MdManageAccounts } from "react-icons/md";
 import { TbLogout } from "react-icons/tb";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 
 
 export default function SidebarUser() {
+    const router = useRouter()
+
+    const deleteCookie = () => {
+        Cookies.remove("token")
+        setTimeout(()=> {
+            router.push("/")
+        }, 200)
+    }
+
     return (
         <div className="h-[750px] w-[300px] bg-white/40 rounded-[12px] shadow-md ">
             <div className="flex h-full flex-col p-5 justify-between gap-5 text-[20px]">
@@ -44,10 +55,10 @@ export default function SidebarUser() {
                         <p>Transaction</p>
                     </div>
                 </div>
-                <div className="flex  gap-2">
+                <button onClick={deleteCookie} className="flex  gap-2">
                     <TbLogout size={30} />
                     <p>Logout</p>
-                </div>
+                </button>
             </div>
         </div>
     )

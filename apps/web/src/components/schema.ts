@@ -56,3 +56,9 @@ export const createDiscountEventSchema = yup.object({
     }).test('is-not-empty', 'Ended date cannot be empty', value => value.trim() !== ''),
     // discount_event_event_id: yup.string().matches(/[ ]/, "Pick the event")
 })
+
+export const validationSchemaAddToCart = yup.object({
+    event_id : yup.string().required("Event must be available"),
+    quantity : yup.number().required("Quantity must be added").min(1, "Quantity must be 1 or above"),
+    totalPrice : yup.number()
+})

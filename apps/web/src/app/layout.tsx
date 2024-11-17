@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className='text-darkestblue'>
+    <html lang="en" className='text-darkestblue overflow-x-hidden'>
       <body className={dmSans.className}>
         <Header />
         {children}

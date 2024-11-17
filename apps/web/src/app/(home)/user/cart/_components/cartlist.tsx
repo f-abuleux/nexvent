@@ -1,17 +1,26 @@
 import { animationVariants } from "@/components/animation";
 import { convertIdr } from "@/components/converter";
-import { ICartData } from "@/components/types/types";
 import { AnimatePresence , motion} from "framer-motion";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
+import PayCartOnlist from "./paycartlist";
+
+interface ICart {
+    title : string,
+    totalPrice : number,
+    quantity : number,
+    cart_id : string,
+    event_id :string
+}
 
 export default function CartList() {
-    const [dataCart, setDataCart] = useState<Array<{ title: string; totalPrice: number; quantity: number }>>([]);
+    const [dataCart, setDataCart] = useState<Array<{ title: string; totalPrice: number; quantity: number; cart_id : string }>>([]);
     const token = Cookies.get("token");
+
 
     const fetchData = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/cart/byid", {
+            const response = await fetch("http://localhost:8000/api/cart/byid?incart=true", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -24,12 +33,13 @@ export default function CartList() {
 
             const result = await response.json();
 
-            const mergedData = result.getCart.map((cartItem: any) => {
+            const mergedData = result.getCart.map((cartItem: ICart) => {
                 const event = result.events.find((event: any) => event.event_id === cartItem.event_id);
                 return {
                     title: event ? event.title : "Unknown Event",
                     totalPrice: cartItem.totalPrice,
                     quantity: cartItem.quantity,
+                    cart_id : cartItem.cart_id
                 };
             });
 
@@ -51,6 +61,8 @@ export default function CartList() {
         totalPrice += item.totalPrice
     )
 
+    
+
     return (
         <div className="w-full rounded-[12px] shadow-md bg-white justify-s flex flex-col gap-2 p-4">
             <p className="font-medium text-[20px]">Your Cart</p>
@@ -63,7 +75,7 @@ export default function CartList() {
                     <p className="border-[1px]"></p>
                     <p>QUANTITY</p>
                     <p className="border-[1px]"></p>
-                    <p>REMOVE</p>
+                    <p>OPTION</p>
                 </div>
                 <AnimatePresence mode="wait">
                     {
@@ -75,10 +87,10 @@ export default function CartList() {
                             exit={animationVariants(key).exit}
                             transition={animationVariants(key).transition}  
                             >
-                                <p>{item.title}</p>
-                                <p>{convertIdr(item.totalPrice)}</p>
-                                <p>{item.quantity}</p>
-                                <button className="bg-lightestpurple rounded-[6px] text-[12px] text-white p-1">REMOVE</button>
+                                <p className="w-1/4">{item.title}</p>
+                                <p className="w-1/4">{convertIdr(item.totalPrice)}</p>
+                                <p className="w-1/4">{item.quantity}</p>
+                                <PayCartOnlist cart_id={item.cart_id} token={token} />
                             </motion.div>
                         ))
                     }

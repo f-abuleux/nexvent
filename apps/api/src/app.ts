@@ -15,7 +15,8 @@ import path from 'path'
 import { CategoryRouter } from './routers/category.router';
 import { DiscountRouter } from './routers/discount.router';
 import { CartRouter } from './routers/cart.router';
-import { OrderRouter } from './routers/order.router';
+import { ReviewRouter } from './routers/review.router';
+// import { OrderRouter } from './routers/order.router';
 
 export default class App {
   private app: Express;
@@ -63,7 +64,8 @@ export default class App {
     const categoryRouter = new CategoryRouter()
     const discountRouter = new DiscountRouter()
     const cartRouter = new CartRouter()
-    const orderRouter = new OrderRouter()
+    // const orderRouter = new OrderRouter()
+    const reviewRouter = new ReviewRouter()
 
     this.app.get('/api', (req: Request, res: Response) => {
       res.send(`Hello, FARRAOS API!`);
@@ -75,7 +77,8 @@ export default class App {
     this.app.use('/api/category', categoryRouter.getRouter())
     this.app.use('/api/discount', discountRouter.getRouter())
     this.app.use('/api/cart', cartRouter.getRouter())
-    this.app.use('/api/order', orderRouter.getRouter())
+    // this.app.use('/api/order', orderRouter.getRouter())
+    this.app.use('/api/review', reviewRouter.getRouter())
   }
 
   public start(): void {

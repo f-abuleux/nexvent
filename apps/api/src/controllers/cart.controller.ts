@@ -1,4 +1,5 @@
 import prisma from "@/prisma";
+import { status_order } from "@prisma/client";
 import axios from "axios";
 import { Request, Response } from "express";
 
@@ -6,7 +7,7 @@ export class CartController {
     async addCart(req: Request, res: Response) {
         try {
             if (!req.user?.user_id) {
-                return res.status(401).json({ message: "User not authenticated" });
+                return res.status(401).send({ msg: "User not authenticated" });
             }
 
             const user = await prisma.user.findFirst({
@@ -20,13 +21,13 @@ export class CartController {
                 const addtoCart = await prisma.cart.create({
                     data: {
                         user_id: req.user?.user_id as string,
-                        event_id: req.params.event_id,
+                        event_id: req.body.event_id,
                         quantity: +req.body.quantity,
                         price: +req.body.price,
-                        status_order : "INCART",
+                        status_order: "INCART",
                         proofpayment: "",
                         paymentlink: "",
-                        totalPrice: req.body.quantity * req.body.price,
+                        totalPrice: req.body.price,
                         discountDiscount_name: req.body.discountDiscount_name
                     }
                 })
@@ -67,43 +68,108 @@ export class CartController {
         }
     }
 
-    async getCartbyId(req: Request, res: Response) {
+    async getTransactionbyId(req: Request, res: Response) {
         try {
-            const getCart = await prisma.cart.findMany({
+            const { page = 1 } = req.query
+            const limit = 5
+            const offset = (+page - 1) * limit
+
+            const cart = await prisma.cart.findMany({
                 where: {
                     user_id: req.user?.user_id,
+                },
+                skip: offset,
+                take: limit,
+                orderBy : {
+                    updated_at : "desc"
+                },
+                include : {
+                    Event : true
                 }
             })
 
-            const events = await Promise.all(getCart.map(async (cartItem) => {
-                return await prisma.event.findUnique({
-                    where: {
-                        event_id: cartItem.event_id
-                    }
-                });
-            }));
+            const totalTransaction = await prisma.cart.count({
+                where: {
+                    user_id: req.user?.user_id
+                }
+            })
+
+            const totalPage = Math.ceil(totalTransaction / limit)
 
             return res.status(200).send({
                 status: "Success",
                 res: 200,
-                msg: "Success to  access getCartbyId API",
-                getCart,
-                events
+                msg: "Success accessing getTransacionbyId API",
+                totalTransaction,
+                totalPage,
+                cart,
             })
 
         } catch (error) {
             return res.status(400).send({
                 status: "Failed",
                 res: 400,
-                msg: "Failed to access getCartbyId API"
+                msg: "Failed access getTransactionbyId API",
             })
         }
     }
 
-    async createTransactionCart(req: Request, res : Response){
+    async getCartbyId(req: Request, res: Response) {
+        try {
+            const { incart, pending, paid, cancel } = req.query;
+
+            let statusOrder: status_order | undefined;
+
+            if (incart === "true") {
+                statusOrder = status_order.INCART;
+            } else if (pending === "true") {
+                statusOrder = status_order.PENDING;
+            } else if (paid === "true") {
+                statusOrder = status_order.PAID;
+            } else if (cancel === "true") {
+                statusOrder = status_order.CANCEL;
+            }
+
+            const getCart = await prisma.cart.findMany({
+                where: {
+                    user_id: req.user?.user_id,
+                    ...(statusOrder ? { status_order: statusOrder } : {}),
+                },
+            });
+
+            const events = await Promise.all(
+                getCart.map(async (cartItem) => {
+                    return await prisma.event.findUnique({
+                        where: {
+                            event_id: cartItem.event_id,
+                        },
+                    });
+                })
+            );
+
+            return res.status(200).send({
+                status: "Success",
+                res: 200,
+                msg: "Success to access getCartbyId API",
+                getCart,
+                events,
+            });
+        } catch (error) {
+            console.error("Error in getCartbyId:", error);
+            return res.status(400).send({
+                status: "Failed",
+                res: 400,
+                msg: "Failed to access getCartbyId API",
+            });
+        }
+    }
+
+    async createTransactionCart(req: Request, res: Response) {
         try {
             if (!req.user?.user_id) {
-                return res.status(401).send({ msg: "User not authenticated" });
+                return res.status(401).send({
+                    msg: "User not authenticated"
+                });
             }
 
             const user = await prisma.user.findFirst({
@@ -114,26 +180,30 @@ export class CartController {
 
             if (!user) throw "User not found";
 
-            await prisma.$transaction(async (prisma)=> {
-                const createTransactionCart = await prisma.cart.create({
-                    data: {
-                        user_id: req.user?.user_id as string,
-                        event_id: req.params.event_id,
-                        quantity: +req.body.quantity,
-                        price: +req.body.price,
-                        status_order : "PENDING",
-                        proofpayment: "",
-                        paymentlink: "",
-                        totalPrice: req.body.quantity * req.body.price,
+            await prisma.$transaction(async (prisma) => {
+                const findCart = await prisma.cart.findFirst({
+                    where: {
+                        cart_id: req.params.cart_id
                     }
                 })
-                if (!createTransactionCart.user_id) throw "Failed to accessing user details"
-                if (!createTransactionCart.event_id) throw "Failed to get event id"
+
+                const createTransactionCart = await prisma.cart.update({
+                    where: {
+                        cart_id: findCart?.cart_id,
+                    },
+                    data: {
+                        status_order: "PENDING",
+                        proofpayment: "",
+                        paymentlink: "",
+                    }
+                })
+                // if (!createTransactionCart.user_id) throw "Failed to accessing user details"
+                // if (!createTransactionCart.event_id) throw "Failed to get event id"
 
                 let data = {
                     transaction_details: {
-                        order_id: createTransactionCart.cart_id,
-                        gross_amount: createTransactionCart.totalPrice
+                        order_id: createTransactionCart.cart_id.toString(),
+                        gross_amount: findCart?.totalPrice
                     },
                     expiry: {
                         unit: "minutes",
@@ -149,6 +219,8 @@ export class CartController {
                     });
 
                     const midTransData = await midTrans.data;
+
+                    if (!midTransData) throw "ERROR MID TRANS DATA"
 
                     await prisma.cart.update({
                         data: {
@@ -174,7 +246,7 @@ export class CartController {
         } catch (error) {
             return res.status(400).send({
                 status: "Failed",
-                res : 400,
+                res: 400,
                 msg: "Failed accessing createTransactionCart API"
             })
         }
@@ -182,34 +254,45 @@ export class CartController {
 
     async updateStatusOrderCart(req: Request, res: Response) {
         try {
-            const { transaction_status, cart_id } = req.body;
-        if (transaction_status == "settlement") {
-            await prisma.cart.update({
-                where: {
-                    cart_id: +cart_id
-                },
-                data: {
-                    status_order: "PAID"
-                },
-            });
+            const { transaction_status, order_id } = req.body;
+            if (transaction_status == "settlement") {
+                const cart = await prisma.cart.update({
+                    where: {
+                        cart_id: order_id
+                    },
+                    data: {
+                        status_order: "PAID",
+                    },
+                });
 
-            const cartItems = await prisma.cart.findMany({
-                where: {
-                    cart_id: +cart_id
-                }
-            });
+                const quantityUpdate = await prisma.event.update({
+                    where: {
+                        event_id: cart.event_id
+                    }, data: {
+                        quantity: {
+                            decrement: +cart.quantity
+                        }
+                    }
+                })
 
-            return res.status(200).send({
-                status: "Success",
-                msg: `Order status updated to PAID and event stock adjusted for `,
-                
-            });
-        }
+                const cartItems = await prisma.cart.findMany({
+                    where: {
+                        cart_id: order_id
+                    }
+                });
+
+                return res.status(200).send({
+                    status: "Success",
+                    msg: `Order status updated to PAID and event stock adjusted for `,
+                    quantityUpdate
+                });
+            }
+
 
             if (transaction_status == "cancel") {
                 await prisma.cart.update({
                     where: {
-                        cart_id: +cart_id
+                        cart_id: order_id
                     },
                     data: {
                         status_order: "CANCEL"
@@ -220,7 +303,7 @@ export class CartController {
             if (transaction_status == "expire") {
                 await prisma.cart.update({
                     where: {
-                        cart_id: +cart_id
+                        cart_id: order_id
                     },
                     data: {
                         status_order: "CANCEL"
@@ -237,6 +320,37 @@ export class CartController {
                 status: "Failed",
                 res: 200,
                 msg: "Failed to access updateStatusOrder API"
+            })
+        }
+    }
+
+    async deleteCart(req: Request, res: Response) {
+        try {
+            const user = await prisma.user.findFirst({
+                where: {
+                    user_id: req.user?.user_id
+                }
+            })
+
+            if (!user) throw "User not find"
+
+            const deleteCart = await prisma.cart.delete({
+                where: {
+                    cart_id: req.params.cart_id
+                }
+            })
+
+            return res.status(200).send({
+                status: "Success",
+                res: 200,
+                msg: "Success accessing deleteCart API",
+                deleteCart
+            })
+        } catch (error) {
+            return res.status(400).send({
+                status: "Failed",
+                res: 400,
+                msg: "Failed to access deleteCart API"
             })
         }
     }

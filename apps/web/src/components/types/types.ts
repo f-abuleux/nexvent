@@ -121,3 +121,34 @@ export interface ICartData {
         user_id: string
     }[]
 }
+
+export interface IAddToCart {
+    event_id: string,
+    quantity: number,
+    price: number
+}
+
+
+export interface ITransactionData {
+    status: string,
+    res: number,
+    msg: string,
+    totalTransaction: number,
+    totalPage: number,
+    cart: [
+        {
+            cart_id: string,
+            event_id: string,
+            quantity: number,
+            totalPrice: number,
+            status_order: string,
+            created_at: string,
+            updated_at: string,
+            Event : {
+                title : string
+                description : string,
+                eventCategoryCategory_name : string
+            }
+        }
+    ]
+}
