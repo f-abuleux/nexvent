@@ -20,6 +20,7 @@ export class AuthRouter{
         this.router.post("/createuser", this.authController.createUser)
         this.router.post("/loginuser", this.authController.loginUser)
         this.router.patch(`/verifyinguser/:token`, this.authController.verificationUser)
+        this.router.patch('/update/point', this.authMiddleware.verifyToken, this.authController.referralCode)
     }
 
     getRouter() : Router {

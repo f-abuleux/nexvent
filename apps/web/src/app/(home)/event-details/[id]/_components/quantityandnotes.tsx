@@ -1,7 +1,7 @@
 'use client';
 
-import { convertPrice } from "@/components/converter";
-import { validationSchemaAddToCart } from "@/components/schema";
+import { convertPrice } from "@/components/libs/action/converter";
+import { validationSchemaAddToCart } from "@/components/types/schema";
 import { IAddToCart } from "@/components/types/types";
 import { Form, Formik } from "formik";
 import Cookies from "js-cookie";
@@ -54,25 +54,26 @@ export default function QuantityAndNotes({ eventquantity, eventprice }: { eventq
             }}
         >
             {({ setFieldValue, handleSubmit }) => (
-                <Form onSubmit={handleSubmit} className="bg-white w-72 h-[700px] bg-white/40 shadow-md rounded-[12px] p-4 gap-5 flex flex-col items-center">
-                    <p className="bg-white p-2 rounded-[6px] w-full text-center font-medium shadow-md">SET QUANTITY AND NOTES</p>
+                <Form onSubmit={handleSubmit} className="bg-white border-[1px] w-72 h-[700px] bg-white/40 shadow-md rounded-[12px] p-4 gap-5 flex flex-col items-center">
+                    <p className="bg-white p-2 rounded-[6px] border-[1px]  w-full text-center font-medium shadow-md">SET QUANTITY AND NOTES</p>
                     <div className="flex flex-col justify-start w-full gap-4">
                         <p className="text-left">QUANTITY</p>
                         <input
                             type="number"
-                            className="p-2 rounded-[6px] text-center"
+                            className="p-2 rounded-[6px] text-center outline-none active:outline-none"
                             value={quantity}
                             min="0"
                             max={eventquantity}
                             onChange={(e) => {
                                 const value = Number(e.target.value);
-                                if(value !== 0) {
+                                if (value !== 0) {
                                     setQuantity(value);
                                     setFieldValue("quantity", value);
                                     setFieldValue("price", value * eventprice);
-                                    
-                                } return 
+
+                                } return
                             }}
+                            
                         />
                         <div className="w-full flex justify-around items-center gap-2">
                             <button
@@ -115,8 +116,8 @@ export default function QuantityAndNotes({ eventquantity, eventprice }: { eventq
                         <button className="bg-white w-full p-2 rounded-[6px]  items-center font-medium text-center"> <p>Apply Code</p></button>
                         <p className="text-left font-bold text-[16px]">TOTAL PRICE</p>
                         <p className="text-left">{convertPrice(totalPrice)}</p>
-                        <button type="submit" className="p-2 border-white border-[1px] bg-white/20 rounded-[6px] font-bold">Add To Cart</button>
-                        <button type="button" className="p-2 border-white bg-white rounded-[6px] font-bold">Checkout</button>
+                        <button type="submit" className="p-2  border-/10 border-[1px] bg-white/20 rounded-[6px] font-bold">Add To Cart</button>
+                        <button type="submit" className="p-2 border-[1px] border-white/10 bg-white rounded-[6px] font-bold"><a href="/user/cart" className="w-full">Checkout</a></button>
                         <div className="flex items-center justify-center gap-4">
                             <div className="flex gap-2 items-center">
                                 <IoMdShare size={16} />

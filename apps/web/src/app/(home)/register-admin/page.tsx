@@ -1,9 +1,9 @@
 'use client'
 
-import { formatDate } from "@/components/converter"
+import { formatDate } from "@/components/libs/action/converter"
 import { registerUser } from "@/components/libs/action/login"
 import { createCookie } from "@/components/libs/action/server"
-import { registerSchema } from "@/components/schema"
+import { registerSchema } from "@/components/types/schema"
 import { IRegister } from "@/components/types/types"
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik"
 import Image from "next/image"
@@ -34,7 +34,7 @@ export default function RegisterAdmin() {
         password: '',
         first_name: '',
         last_name: '',
-        role : "ADMIN",
+        role: "ADMIN",
         phone: '',
         date_of_birth: ''
     }
@@ -61,7 +61,7 @@ export default function RegisterAdmin() {
                             <p className='font-light text-[12px] w-[300px]'>Create your next events on <span className='font-medium'>NexVent</span>, already have an account? <a href="/login-admin" className="font-medium underline">Login Here!</a></p>
                             <div className="flex flex-col w-full">
                                 <label htmlFor="email" className="text-darkestblue  text-[16px]">Email</label>
-                                <Field type="email" name="email" className="px-5 py-2 border border-main rounded-full focus:outline-none text-[16px]" placeholder="nexvent@gmail.com"/>
+                                <Field type="email" name="email" className="px-5 py-2 border border-main rounded-full focus:outline-none text-[16px]" placeholder="nexvent@gmail.com" />
                                 <ErrorMessage name="email" component="div" className="text-darkpurplered text-[12px]" />
                             </div>
                             <div className="flex flex-col w-full">
@@ -83,7 +83,7 @@ export default function RegisterAdmin() {
                             </div>
                             <div className="flex flex-col w-full">
                                 <label htmlFor="phone" className="text-darkestblue text-[16px]">Phone</label>
-                                <Field type="text" name="phone" className="px-5 py-2 border border-main rounded-full focus:outline-none text-[16px]" placeholder="08XXXXXXXXXX"/>
+                                <Field type="text" name="phone" className="px-5 py-2 border border-main rounded-full focus:outline-none text-[16px]" placeholder="08XXXXXXXXXX" />
                                 <ErrorMessage name="phone" component="div" className="text-darkpurplered text-[12px]" />
                             </div>
                             <div className="flex flex-col  w-full">

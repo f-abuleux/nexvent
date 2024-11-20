@@ -1,6 +1,6 @@
 "use client"
 
-import { convertDateDatabase, convertPrice } from "@/components/converter";
+import { convertDateDatabase, convertPrice } from "@/components/libs/action/converter";
 import { IEventStatus } from "@/components/types/types";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function EventList() {
     const [dataEvent, setDataEvent] = useState<IEventStatus>();
     const [page, setPage] = useState<number>(1);
-    const [isAnimating, setIsAnimating] = useState<boolean>(false); 
+    const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
     const token = Cookies.get("token");
 
@@ -31,11 +31,11 @@ export default function EventList() {
 
     const nextPage = () => {
         if (dataEvent?.totalPage && page < dataEvent.totalPage) {
-            setIsAnimating(true); 
+            setIsAnimating(true);
             setTimeout(() => {
-                setPage(page + 1); 
+                setPage(page + 1);
                 setIsAnimating(false);
-            }, 800); 
+            }, 800);
         }
     };
 
@@ -43,9 +43,9 @@ export default function EventList() {
         if (page > 1) {
             setIsAnimating(true);
             setTimeout(() => {
-                setPage(page - 1); 
+                setPage(page - 1);
                 setIsAnimating(false);
-            }, 800); 
+            }, 800);
         }
     };
 
@@ -69,15 +69,15 @@ export default function EventList() {
                         <motion.div
                             key={key}
                             className="bg-lightestcream/50 rounded-[8px] w-full p-2 shadow-md flex flex-wrap justify-between"
-                            initial={{opacity: 0 , translateX : -10}}
-                            animate={{ opacity: 1 , translateX : 0 }}
-                            exit={{ opacity: 0 , translateX : -10}}
+                            initial={{ opacity: 0, translateX: -10 }}
+                            animate={{ opacity: 1, translateX: 0 }}
+                            exit={{ opacity: 0, translateX: -10 }}
                             transition={{
                                 duration: 0.2,
                                 ease: "easeInOut",
-                                delay: key * 0.1 
+                                delay: key * 0.1
                             }}
-                            >
+                        >
                             <p>{item.title}</p>
                             <p>{convertDateDatabase(item.date)}</p>
                             <p>{convertPrice(item.price)}</p>

@@ -43,7 +43,8 @@ export class AuthController {
                 user_id: newUser.user_id,
                 role: newUser.role,
                 email: newUser.email,
-                verified: newUser.verified
+                verified: newUser.verified,
+                first_name: newUser.first_name
             }, "1h")
 
             console.log("TOKEN GENERATED", token)
@@ -131,17 +132,18 @@ export class AuthController {
                 user_id: user.user_id,
                 role: user.role,
                 email: user.email,
-                verified: user.verified
+                verified: user.verified,
+                first_name: user.first_name
             }, "24h")
 
             return res
                 .status(201)
-                .send({ status: "Success", msg: "Login Success", res : 201, token, user });
+                .send({ status: "Success", msg: "Login Success", res: 201, token, user });
         } catch (error) {
             return res.status(400).send({
-                status : "Failed",
+                status: "Failed",
                 res: 400,
-                msg : "Failed Login User"
+                msg: "Failed Login User"
             })
         }
     }
@@ -173,23 +175,79 @@ export class AuthController {
         }
     }
 
-    async getUser(req : Request, res: Response){
+    async getUser(req: Request, res: Response) {
         try {
             const user = await prisma.user.findUnique({
-                where: { user_id : req.user?.user_id}
+                where: { user_id: req.user?.user_id }
             })
             return res.status(200).send({
-                status : "Success",
-                res : 200,
-                msg : "Succes get user data",
+                status: "Success",
+                res: 200,
+                msg: "Succes get user data",
                 user
-                
+
             })
         } catch (error) {
             return res.status(400).send({
-                status : "Failed",
-                res : 200,
+                status: "Failed",
+                res: 200,
                 msg: "Failed to get user"
+            })
+        }
+    }
+
+    async referralCode(req: Request, res: Response) {
+        try {
+            const user = await prisma.user.findFirst({
+                where: {
+                    user_id: req.user?.user_id
+                }
+            })
+
+            if (!user) throw "User not found"
+
+            if(user.referred_code) throw `${user.referred_code} code already applied your account`
+
+            await prisma.$transaction(async (prisma) => {
+                const findReferral = await prisma.user.findFirst({
+                    where: {
+                        referral_code: req.body.referred_code
+                    }
+                })
+
+                if (!findReferral) throw "Referral not found"
+
+                const userUpdateReferred = await prisma.user.update({
+                    where: {
+                        user_id: user.user_id
+                    }, data: {
+                        referred_code: req.body.referred_code,
+                    }
+                })
+
+                const userUpdatePoint = await prisma.user.update({
+                    where : {
+                        user_id : findReferral.user_id
+                    }, data : {
+                        point : {
+                            increment : 10000
+                        }
+                    }
+                })
+
+                return res.status(200).send({
+                    status: "Succes",
+                    res: 200,
+                    msg: "Referral found & Point updated",
+                    userUpdateReferred,
+                    userUpdatePoint
+                })
+            })
+        } catch (error) {
+            return res.status(400).send({
+                status: "Failed",
+                res: 400,
+                msg: "Failed to access referralCode API"
             })
         }
     }

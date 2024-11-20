@@ -15,6 +15,13 @@ import { useRouter } from "next/navigation";
 export default function SidebarAdmin() {
     const router = useRouter()
 
+    const token = Cookies.get("token")
+    let payload;
+    if (token) {
+        payload = JSON.parse(atob(token.split('.')[1]));
+    }
+
+
     const deleteCookie = () => {
         Cookies.remove("token")
         router.push("/")
@@ -29,8 +36,8 @@ export default function SidebarAdmin() {
                             <MdOutlineAccountCircle size={40} />
                         </div>
                         <div className="text-[14px]">
-                            <p>NAMA</p>
-                            <p>EMAIL</p>
+                            <p className="font-bold">{payload.first_name}</p>
+                            <p className="font-normal text-[10px]">{payload.email}</p>
                         </div>
                     </div>
                     <p className="border-[1px] border-white"></p>

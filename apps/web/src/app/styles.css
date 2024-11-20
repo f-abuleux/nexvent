@@ -1,0 +1,42 @@
+.parallax {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  color: white;
+  font-size: 8rem;
+  font-weight: bold;
+}
+.parallaxmedium {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  color: white;
+  font-size: 4rem;
+  font-weight: bold;
+}
+.parallaxmedium2 {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  color: #000000 ;
+  font-size: 4rem;
+  font-weight: bold;
+}
+
+.scroller {
+  display: flex;
+  white-space: nowrap;
+}
+
+/* .scroller span {
+  padding-right: rem;
+} */

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { MdOutlineAccountCircle } from "react-icons/md";
+import { convertIdr } from "./libs/action/converter";
 
 export default function OverviewAccount({name, email, point, referral_code, image, success, pending, failed}: { name : string, email: string, point : number, referral_code : string, image : string, success : number, pending : number, failed : number }) {
     return (
@@ -14,7 +15,7 @@ export default function OverviewAccount({name, email, point, referral_code, imag
                 <div className="flex gap-5 flex-col">
                     <p>{name}</p>
                     <p>{email}</p>
-                    <p><span className="font-bold">Point : </span>{point}</p>
+                    <p><span className="font-bold">Point : </span>{convertIdr(point)}</p>
                     <p><span className="font-bold">Referral Code : </span>{referral_code}</p>
                 </div>
             </div>

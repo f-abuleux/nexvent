@@ -5,6 +5,7 @@ export interface IPayload {
     role : string,
     verified : boolean
     email: string
+    first_name : string
 }
 
 const key = process.env.SECRET_KEY;

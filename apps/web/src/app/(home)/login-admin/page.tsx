@@ -2,7 +2,7 @@
 
 import { loginUser } from '@/components/libs/action/login';
 import { createCookie } from '@/components/libs/action/server';
-import { loginSchema } from '@/components/schema';
+import { loginSchema } from '@/components/types/schema';
 import { ILogin } from '@/components/types/types';
 import { Form, Formik, FormikHelpers, Field, ErrorMessage } from 'formik';
 import Image from 'next/image';

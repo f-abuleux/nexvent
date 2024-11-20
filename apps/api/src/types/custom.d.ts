@@ -2,6 +2,7 @@ type User = {
     user_id: string
     role: string
     email: string
+    first_name : string
     verified: boolean
 }
 

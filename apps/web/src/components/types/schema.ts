@@ -50,7 +50,7 @@ export const createDiscountEventSchema = yup.object({
     discount_quota: yup.number().required("Discount quota is required").min(1, 'Discount quota must be greater than zero'),
     type: yup.string().required("Discount Type is required").test('is-not-empty', 'Discount Type cannot be empty', value => value.trim() !== ''),
     start_date: yup.string().required("Starting date is required").test('is-not-empty', 'Starting date cannot be empty', value => value.trim() !== ''),
-    end_date: yup.string().required("Ended date is required").test('is-greater', 'End date must be later than start date', function(value) {
+    end_date: yup.string().required("Ended date is required").test('is-greater', 'End date must be later than start date', function (value) {
         const { start_date } = this.parent;
         return new Date(value) > new Date(start_date);
     }).test('is-not-empty', 'Ended date cannot be empty', value => value.trim() !== ''),
@@ -58,7 +58,17 @@ export const createDiscountEventSchema = yup.object({
 })
 
 export const validationSchemaAddToCart = yup.object({
-    event_id : yup.string().required("Event must be available"),
-    quantity : yup.number().required("Quantity must be added").min(1, "Quantity must be 1 or above"),
-    totalPrice : yup.number()
+    event_id: yup.string().required("Event must be available"),
+    quantity: yup.number().required("Quantity must be added").min(1, "Quantity must be 1 or above"),
+    totalPrice: yup.number()
+})
+
+export const schemaValidationReview = yup.object({
+    event_id: yup.string().required("Event Id should be recognized"),
+    event_rating: yup.number().required("Rating must be inputted").min(1, "Rating must be above 0"),
+    event_review: yup.string().required("Review cannot be empty").min(10, "Review must be at least 10 characters long")
+})
+
+export const updateReferral = yup.object({
+    referred_code: yup.string().required("Referred must be inputed").min(20, "Referred code must be at least 20 characters long").max(23, "Referred code must be at most 23 characters long")
 })

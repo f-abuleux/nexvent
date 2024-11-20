@@ -1,20 +1,22 @@
-import { animationVariants } from "@/components/animation";
-import { convertIdr } from "@/components/converter";
-import { AnimatePresence , motion} from "framer-motion";
+"use client"
+
+import { animationVariants } from "@/components/libs/action/animation";
+import { convertIdr } from "@/components/libs/action/converter";
+import { AnimatePresence, motion } from "framer-motion";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import PayCartOnlist from "./paycartlist";
 
 interface ICart {
-    title : string,
-    totalPrice : number,
-    quantity : number,
-    cart_id : string,
-    event_id :string
+    title: string,
+    totalPrice: number,
+    quantity: number,
+    cart_id: string,
+    event_id: string
 }
 
 export default function CartList() {
-    const [dataCart, setDataCart] = useState<Array<{ title: string; totalPrice: number; quantity: number; cart_id : string }>>([]);
+    const [dataCart, setDataCart] = useState<Array<{ title: string; totalPrice: number; quantity: number; cart_id: string }>>([]);
     const token = Cookies.get("token");
 
 
@@ -39,7 +41,7 @@ export default function CartList() {
                     title: event ? event.title : "Unknown Event",
                     totalPrice: cartItem.totalPrice,
                     quantity: cartItem.quantity,
-                    cart_id : cartItem.cart_id
+                    cart_id: cartItem.cart_id
                 };
             });
 
@@ -57,11 +59,11 @@ export default function CartList() {
 
     let totalPrice = 0;
 
-    dataCart.map((item) => 
+    dataCart.map((item) =>
         totalPrice += item.totalPrice
     )
 
-    
+
 
     return (
         <div className="w-full rounded-[12px] shadow-md bg-white justify-s flex flex-col gap-2 p-4">
@@ -79,20 +81,28 @@ export default function CartList() {
                 </div>
                 <AnimatePresence mode="wait">
                     {
-                        dataCart && dataCart.map((item, key) => (
-                            <motion.div key={key} className="bg-lightestcream/50 rounded-[8px] w-full p-2 shadow-md flex flex-wrap justify-between items-center"
-                            variants={animationVariants(key)}
-                            initial={animationVariants(key).initial}
-                            animate={animationVariants(key).animate}
-                            exit={animationVariants(key).exit}
-                            transition={animationVariants(key).transition}  
-                            >
-                                <p className="w-1/4">{item.title}</p>
-                                <p className="w-1/4">{convertIdr(item.totalPrice)}</p>
-                                <p className="w-1/4">{item.quantity}</p>
-                                <PayCartOnlist cart_id={item.cart_id} token={token} />
-                            </motion.div>
-                        ))
+                        dataCart && dataCart.length > 0 ? (
+                            dataCart && dataCart.map((item, key) => (
+                                <motion.div key={key} className="bg-lightestcream/50 rounded-[8px] w-full p-2 shadow-md flex flex-wrap justify-between items-center"
+                                    variants={animationVariants(key)}
+                                    initial={animationVariants(key).initial}
+                                    animate={animationVariants(key).animate}
+                                    exit={animationVariants(key).exit}
+                                    transition={animationVariants(key).transition}
+                                >
+                                    <p className="w-1/4">{item.title}</p>
+                                    <p className="w-1/4">{convertIdr(item.totalPrice)}</p>
+                                    <p className="w-1/4">{item.quantity}</p>
+                                    <PayCartOnlist cart_id={item.cart_id} token={token} />
+                                </motion.div>
+                            ))
+                        ) : (
+                            <div className="w-full text-center font-roman">
+                                ADD SOME EVENT YOUR CART AND WILL APPEAR RIGTH HERE
+                            </div>
+                        )
+
+                        
                     }
                 </AnimatePresence>
                 <div className="flex flex-col w-full gap-2 mt-5 items-end justify-end">

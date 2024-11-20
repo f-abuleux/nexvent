@@ -15,7 +15,8 @@ export class ReviewRouter {
     }
 
     private initializeRouter () {
-
+        this.router.get("/byevent", this.authMiddleware.verifyToken, this.reviewController.getReviewbyEvent)
+        this.router.post("/create", this.authMiddleware.verifyToken, this.reviewController.createReviewEvent )
     }
 
     getRouter() : Router {

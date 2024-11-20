@@ -1,19 +1,19 @@
 'use client'
 
-import { createEventSchema } from "@/components/schema";
+import { createEventSchema } from "@/components/types/schema";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import { useState, ChangeEvent, useEffect } from "react";
 import { toast } from 'react-toastify';
 import ImagePreviewProduct from "./imagePreview";
 import { FaFileUpload } from "react-icons/fa";
 import Cookies from "js-cookie";
-import { formatDate } from "@/components/converter";
+import { formatDate } from "@/components/libs/action/converter";
 import { useRouter } from "next/navigation";
 import { ICreateEvent } from "@/components/types/types";
 
 interface ICategory {
-    category_id : number,
-    name : string
+    category_id: number,
+    name: string
 }
 
 export default function FormCreateEvent() {
@@ -23,10 +23,10 @@ export default function FormCreateEvent() {
     const getCategoryData = async () => {
         try {
             const category = await fetch('http://localhost:8000/api/category', {
-                method : "GET"
+                method: "GET"
             })
 
-            if(!category) throw "Failed to get category"
+            if (!category) throw "Failed to get category"
 
             const categoryData = await category.json()
 
@@ -39,7 +39,7 @@ export default function FormCreateEvent() {
 
     console.log(category)
 
-    useEffect(()=> {
+    useEffect(() => {
         getCategoryData()
     }, [])
 
@@ -50,7 +50,7 @@ export default function FormCreateEvent() {
         quantity: "",
         price: "",
         location: "",
-        category : "",
+        category: "",
         image: null
     };
 
@@ -70,9 +70,9 @@ export default function FormCreateEvent() {
         if (data.image) {
             formData.append("image", data.image);
         }
-    
+
         console.log("FormData entries:", Array.from(formData.entries()));
-    
+
         try {
             const res = await fetch('http://localhost:8000/api/event/create', {
                 method: 'POST',
@@ -82,9 +82,9 @@ export default function FormCreateEvent() {
                 },
                 body: formData
             });
-    
+
             if (!res.ok) throw new Error("Failed to create event");
-    
+
             const result = await res.json();
             console.log("Server Response:", result);
             console.log("Form Data submitted:", data);
@@ -97,7 +97,7 @@ export default function FormCreateEvent() {
             console.error("Error:", error);
         }
     };
-    
+
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>, setFieldValue: (field: string, value: any) => void) => {
         if (e.target.files) {
             const newFile = Array.from(e.target.files);

@@ -1,10 +1,10 @@
 'use client'
 
-import { registerSchema } from "@/components/schema"
+import { registerSchema } from "@/components/types/schema"
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik"
 import Image from "next/image"
 import { format } from "date-fns"
-import { formatDate } from "@/components/converter"
+import { formatDate } from "@/components/libs/action/converter"
 import { useRouter } from "next/navigation"
 import { IRegister } from "@/components/types/types"
 import { registerUser } from "@/components/libs/action/login"
@@ -35,7 +35,7 @@ export default function RegisterUser() {
         password: '',
         first_name: '',
         last_name: '',
-        role : "USER",
+        role: "USER",
         phone: '',
         date_of_birth: ''
     }

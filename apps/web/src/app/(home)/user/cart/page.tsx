@@ -52,7 +52,6 @@ export default function UserOrder() {
                                 <p>Your Point : {dataUser?.point}</p>
                                 <p className="border-[1px]"></p>
                                 <p>TOTAL CART</p>
-
                             </div>
                         </div>
                     </div>

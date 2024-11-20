@@ -1,7 +1,7 @@
 "use client";
 
-import { animationVariants } from "@/components/animation";
-import { convertDate } from "@/components/converter";
+import { animationVariants } from "@/components/libs/action/animation";
+import { convertDate, convertPrice } from "@/components/libs/action/converter";
 import { ITransactionData } from "@/components/types/types";
 import { AnimatePresence, motion } from "framer-motion";
 import Cookies from "js-cookie";
@@ -36,11 +36,11 @@ export default function TransactionListUser() {
 
     const nextPage = () => {
         if (data && page < data.totalPage) {
-            setCurrentData(data); 
+            setCurrentData(data);
             setTimeout(() => {
                 setPage(page + 1);
-                setCurrentData(null); 
-            }, 800); 
+                setCurrentData(null);
+            }, 800);
         }
     };
 
@@ -83,7 +83,7 @@ export default function TransactionListUser() {
                             <p className="w-1/5">{convertDate(item.updated_at)}</p>
                             <p className="w-1/5">{item.Event.title}</p>
                             <p className="w-1/5">{item.quantity}</p>
-                            <p className="w-1/5">{item.totalPrice}</p>
+                            <p className="w-1/5">{convertPrice(item.totalPrice)}</p>
                             <p className="w-1/12">{item.status_order}</p>
                         </motion.div>
                     ))}

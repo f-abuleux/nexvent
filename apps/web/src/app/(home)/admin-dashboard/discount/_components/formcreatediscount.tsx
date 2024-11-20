@@ -1,7 +1,7 @@
 "use client"
 
-import { formatDate } from "@/components/converter";
-import { createDiscountEventSchema } from "@/components/schema";
+import { formatDate } from "@/components/libs/action/converter";
+import { createDiscountEventSchema } from "@/components/types/schema";
 import { ICreateDiscount, IEventStatus } from "@/components/types/types";
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import Cookies from "js-cookie";

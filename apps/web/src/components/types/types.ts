@@ -144,11 +144,55 @@ export interface ITransactionData {
             status_order: string,
             created_at: string,
             updated_at: string,
-            Event : {
-                title : string
-                description : string,
-                eventCategoryCategory_name : string
+            Event: {
+                title: string
+                description: string,
+                eventCategoryCategory_name: string
             }
         }
     ]
+}
+
+export interface ICreateReviewEvent {
+    event_id: string,
+    event_rating: number,
+    event_review: string
+}
+
+export interface IAvailableReview {
+    status: string,
+    res: number,
+    msg: string,
+    availableToReview: [
+        {
+            Event: {
+                event_id: string,
+                title: string,
+                description: string,
+                date: string,
+                price: number,
+                location: string,
+                eventCategoryCategory_name: string
+            }
+        }
+    ]
+    reviewedData : [
+        {
+            Event : {
+                event_id: string,
+                title: string,
+                description: string,
+                date: string,
+                price: number,
+                location: string,
+                eventCategoryCategory_name: string
+            },
+            event_rating : number,
+            event_review : string, 
+        }
+    ]
+}
+
+export interface IReferral {
+    referred_code : string
 }

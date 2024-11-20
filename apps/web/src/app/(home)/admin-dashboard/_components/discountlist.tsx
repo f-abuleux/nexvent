@@ -1,12 +1,12 @@
 "use client"
 
-import { checkDiscount, convertDateDatabase } from "@/components/converter";
+import { checkDiscount, convertDateDatabase } from "@/components/libs/action/converter";
 import { IDiscountStatus } from "@/components/types/types";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { motion, AnimatePresence } from "framer-motion"
-import { animationVariants } from "@/components/animation";
+import { animationVariants } from "@/components/libs/action/animation";
 
 
 export default function DiscountList() {
@@ -74,11 +74,11 @@ export default function DiscountList() {
                         dataDiscount?.discountTotal.map((item, key) => {
                             return (
                                 <motion.div key={key} className="bg-lightestcream/50 rounded-[8px] w-full p-2 shadow-md flex flex-wrap justify-between"
-                                variants={animationVariants(key)}
-                                initial={animationVariants(key).initial}
-                                animate={animationVariants(key).animate}
-                                exit={animationVariants(key).exit}
-                                transition={animationVariants(key).transition}
+                                    variants={animationVariants(key)}
+                                    initial={animationVariants(key).initial}
+                                    animate={animationVariants(key).animate}
+                                    exit={animationVariants(key).exit}
+                                    transition={animationVariants(key).transition}
                                 >
                                     <p>{item.discount_code}</p>
                                     <p>{checkDiscount(item.discount_value)}</p>

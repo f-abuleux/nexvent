@@ -55,7 +55,7 @@ export class EventController {
                 eventTotal = await prisma.event.findMany({
                     where: { user_id: req.user?.user_id },
                     orderBy: {
-                        date : "desc"
+                        date: "desc"
                     },
                     skip: offset,
                     take: limit
@@ -64,7 +64,7 @@ export class EventController {
                 eventTotal = await prisma.event.findMany({
                     where: { user_id: req.user?.user_id },
                     orderBy: {
-                        date : "desc"
+                        date: "desc"
                     },
                 });
             }
@@ -111,23 +111,74 @@ export class EventController {
         }
     }
 
-    async getEventDetail(req: Request, res : Response){
+    async getEventDetail(req: Request, res: Response) {
         try {
             const detailEvent = await prisma.event.findUnique({
-                where: {event_id : req.params.event_id}
+                where: { event_id: req.params.event_id }
             })
 
             return res.status(200).send({
-                status : "Success",
-                res : 200,
+                status: "Success",
+                res: 200,
                 msg: "Success to access getEventDetails API",
                 detailEvent
             })
         } catch (error) {
             return res.status(400).send({
                 status: "Failed",
+                res: 200,
+                msg: "Failed to access getEventDetails API"
+            })
+        }
+    }
+
+    async getEventGeneral(req: Request, res: Response) {
+        try {
+            const { page = 1 } = req.query
+            const limit = 3
+            const offset = (Number(page) - 1) * limit
+
+            if (page) {
+                const getEvent = await prisma.event.findMany({
+                    skip: offset
+                    , take: limit
+                }) 
+                
+                const getEventTotal = await prisma.event.count()
+
+                const totalPage = Math.ceil(getEventTotal/limit)
+                
+                return res.status(200).send({
+                    status : "Success",
+                    res : 200,
+                    msg : "Success accessing getEventGeneral API",
+                    getEvent,
+                    getEventTotal,
+                    totalPage
+                })
+            }
+
+            const getEvent = await prisma.event.findMany({
+                skip: offset
+                , take: limit
+            }) 
+
+            const getEventTotal = await prisma.event.count()
+
+            return res.status(200).send({
+                status : "Success",
                 res : 200,
-                msg : "Failed to access getEventDetails API"
+                msg : "Success accessing getEventGeneral API",
+                getEvent,
+                getEventTotal
+            })
+
+
+        } catch (error) {
+            return res.status(400).send({
+                status: "Failed",
+                res: 400,
+                msg: "Failed to access getEventGeneral API"
             })
         }
     }

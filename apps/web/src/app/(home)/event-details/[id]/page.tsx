@@ -1,6 +1,6 @@
 'use client'
 
-import { convertDate, convertPrice } from "@/components/converter";
+import { convertDate, convertPrice } from "@/components/libs/action/converter";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { IoMdAdd, IoMdRemove } from "react-icons/io";
@@ -9,6 +9,7 @@ import QuantityAndNotes from "./_components/quantityandnotes";
 import EventCard from "./_components/eventcard";
 import { useParams } from "next/navigation";
 import { IDetailEvent } from "@/components/types/types";
+import ParallaxText from "../../_components/ParallaxText";
 
 
 export default function EventDetailsUser() {
@@ -53,7 +54,7 @@ export default function EventDetailsUser() {
 
     return (
         <div className="relative w-full h-[1605px]  flex flex-wrap justify-center ">
-            <div className="absolute inset-0 bg-gradient-to-br from-darkblue/35 to-lightestcream bg-cover bg-center -scale-x-100 blur-sm -z-20"></div>
+            <div className="absolute inset-0 bg-cover bg-center -z-20 opacity-10 grayscale-[50%]" style={{ backgroundImage: "url('/bg-detailevent2.webp')"  }}></div>
             <div className="flex justify-center items-start gap-4 mt-28 mx-4">
                 <div className="sm:[650px] md:w-[800px] lg:w-[950px] items-center justify-center  rounded-md flex flex-col gap-4">
                     <div className="flex flex-col gap-5 p-4 w-full bg-white rounded-[10px] items-center">
@@ -70,16 +71,22 @@ export default function EventDetailsUser() {
                         </div>
                     </div>
                 </div>
+                <p className="h-full border-[1px]"></p>
                 <QuantityAndNotes eventprice={dataEvent?.price ?? 0} eventquantity={dataEvent?.quantity ?? 0} />
             </div>
+            <div className="relative ">
+                <ParallaxText baseVelocity={-3} maindiv="parallaxmedium2"> OTHER FROM EVENT ORGANIZER. </ParallaxText>
+            </div>
             <div className="flex flex-wrap sm:[750px] md:w-[950px] lg:w-[1350px] justify-center gap-2 -z-10">
-                <p className="font-bold text-[24px] text-left w-full mb-8 ml-12">OTHER FROM EVENT ORGANIZER</p>
                 <div className="flex flex-wrap h-full w-full justify-center gap-4 ">
                     <EventCard />
                     <EventCard />
                     <EventCard />
                     <EventCard />
                 </div>
+            </div>
+            <div className="relative ">
+                <ParallaxText baseVelocity={3} maindiv="parallaxmedium2"> NEXVENT.NEXTVENT. </ParallaxText>
             </div>
         </div>
     )
